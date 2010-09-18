@@ -22,7 +22,15 @@ module RangeDsl
       end
 
       def inspect
-        "#{@left.inspect} #{name_for_inspect} #{@right.inspect}"
+        left_str = (require_brace?(@left) ? '(%s)' : '%s') % @left.inspect
+        right_str = (require_brace?(@right) ? '(%s)' : '%s') % @right.inspect
+        "#{left_str} #{name_for_inspect} #{right_str}"
+      end
+
+      private
+      def require_brace?(other)
+        return false unless other.is_a?(ConnectionExp::Base)
+        other.class != self.class
       end
     end
 

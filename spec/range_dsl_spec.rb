@@ -275,4 +275,26 @@ describe "RangeDsl" do
     end
   end
 
+  describe "complex inspection" do
+    it "lt(3) | gt(30) | any(2, 14, 36)" do
+      r2 = @context.instance_eval("lt(3) | gt(30) | any(12, 14, 16)")
+      r2.inspect.should == "lt(3) | gt(30) | any(12, 14, 16)"
+    end
+
+    it "gte(3) & lt(10) & any(2, 4, 6)" do
+      r2 = @context.instance_eval("gte(3) & lt(10) & any(2, 4, 6)")
+      r2.inspect.should == "gte(3) & lt(10) & any(2, 4, 6)"
+    end
+
+    it "(lt(3) | gt(30)) & any(2, 14, 36)" do
+      r2 = @context.instance_eval("(lt(3) | gt(30)) & any(2, 14, 36)")
+      r2.inspect.should == "(lt(3) | gt(30)) & any(2, 14, 36)"
+    end
+
+    it "lt(3) & (gt(30) | any(2, 14, 36))" do
+      r2 = @context.instance_eval("lt(3) & (gt(30) | any(2, 14, 36))")
+      r2.inspect.should == "lt(3) & (gt(30) | any(2, 14, 36))"
+    end
+  end
+
 end
