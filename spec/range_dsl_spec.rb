@@ -7,6 +7,23 @@ describe "RangeDsl" do
     @context.extend(RangeDsl)
   end
 
+  describe "introduction" do
+    it "1,2と5以上はtrue" do
+      r = @context.instance_eval do
+        any 1, 2, gte(5)
+      end
+      r.include?(-10000).should == false
+      r.include?(0).should == false
+      r.include?(1).should == true
+      r.include?(2).should == true
+      r.include?(3).should == false
+      r.include?(4).should == false
+      r.include?(5).should == true
+      r.include?(6).should == true
+      r.include?(10000).should == true
+    end
+  end
+
   describe "easy open range" do
     describe "gte" do
       [:gte, :greater_than_equal].each do |operator|
