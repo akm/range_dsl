@@ -11,7 +11,7 @@ module RangeDsl
   def less_than(v)         ; OpenRangeExp::LessThan.new(v); end
   def equal(v)    ; ExactExp::Equal.new(v); end
   def not_equal(v); ExactExp::NotEqual.new(v); end
-  def invert(exp)    ; FilterExp::Invert.new(exp); end
+  def invert(exp) ; FilterExp::Invert.new(exp); end
 
   alias_method :gte, :greater_than_equal
   alias_method :gt, :greater_than
