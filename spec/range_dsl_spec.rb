@@ -259,8 +259,20 @@ describe "RangeDsl" do
         end
       end
     end
-
   end
 
+  describe "dynamic compare" do
+    describe "with Proc" do
+      it "1以上の奇数" do
+        r1 = @context.instance_eval{ gte(1) & func{|v| v % 2 == 1} }
+        r1.include?(-3).should == false
+        r1.include?(-1).should == false
+        r1.include?(0).should == false
+        r1.include?(1).should == true
+        r1.include?(2).should == false
+        r1.include?(3).should == true
+      end
+    end
+  end
 
 end

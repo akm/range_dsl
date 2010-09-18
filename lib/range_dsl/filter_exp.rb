@@ -19,5 +19,21 @@ module RangeDsl
       end
     end
 
+    class Func
+      include ConnectionExp::Client
+
+      def initialize(&block)
+        @block = block
+      end
+
+      def include?(v)
+        !!@block.call(v)
+      end
+
+      def inspect
+        "func{...}"
+      end
+    end
+
   end
 end
