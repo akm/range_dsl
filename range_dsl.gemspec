@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
      "lib/range_dsl/exact_exp.rb",
      "lib/range_dsl/filter_exp.rb",
      "lib/range_dsl/open_range_exp.rb",
+     "range_dsl.gemspec",
      "spec/range_dsl_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb"
