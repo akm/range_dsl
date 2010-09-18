@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "RangeDsl" do
@@ -79,7 +80,7 @@ describe "RangeDsl" do
       end
 
       describe "lt" do
-        [:not, :not_equal].each do |operator|
+        [:neq, :not_equal].each do |operator|
           it operator do
             @r1 = @context.send(operator, 100)
             @r1.include?(99).should == true
@@ -92,6 +93,22 @@ describe "RangeDsl" do
         end
       end
     end
+
+    describe "not with other expression" do
+      it "not equal(100)" do
+        r1 = @context.instance_eval do
+          not_be(equal(100))
+        end
+        r1.include?(99).should == true
+        r1.include?(99.9).should == true
+        r1.include?(100).should == false
+        r1.include?(100.0).should == false
+        r1.include?(100.1).should == true
+        r1.include?(101).should == true
+      end
+
+    end
+
 
     describe "complex pattern" do
       describe "gt(3) & lt(6)" do
@@ -155,7 +172,16 @@ describe "RangeDsl" do
       end
 
       describe "lte(3) | gte(6)" do
-        ["lte(3).or(gte(6))", "lte(3) | gte(6)"].each do |dsl|
+        [
+          "lte(3).or(gte(6))",
+          "lte(3) | gte(6)",
+          # not_be を使う
+          "not_be(gt(3) & lt(6))",
+          "not_be(gt(3).and(lt(6)))",
+          # 更にド・モルガンの法則で展開
+          "not_be(gt(3)) | not_be(lt(6))",
+          "not_be(gt(3)).or(not_be(lt(6)))",
+        ].each do |dsl|
           it dsl do
             @r2 = @context.instance_eval(dsl)
             @r2.include?(2).should == true
@@ -173,6 +199,7 @@ describe "RangeDsl" do
           end
         end
       end
+
     end
 
   end
