@@ -2,6 +2,7 @@ module RangeDsl
 
   autoload :OpenRangeExp, 'range_dsl/open_range_exp'
   autoload :ExactExp, 'range_dsl/exact_exp'
+  autoload :ConnectionExp, 'range_dsl/connection_exp'
 
   def greater_than_equal(v); OpenRangeExp::GreaterThanEqual.new(v); end
   def greater_than(v)      ; OpenRangeExp::GreaterThan.new(v); end

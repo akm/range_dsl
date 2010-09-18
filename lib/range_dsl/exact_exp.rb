@@ -3,6 +3,8 @@ require 'range_dsl'
 module RangeDsl
   module ExactExp
     class Equal
+      include ConnectionExp::Client
+
       attr_accessor :value
       def initialize(value)
         @value = value

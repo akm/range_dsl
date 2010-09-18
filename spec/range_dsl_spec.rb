@@ -135,7 +135,7 @@ describe "RangeDsl" do
       end
 
       describe "lt(3) | gt(6)" do
-        ["lt(3).or(gt(6))", "lt(3) & gt(6)"].each do |dsl|
+        ["lt(3).or(gt(6))", "lt(3) | gt(6)"].each do |dsl|
           it dsl do
             @r2 = @context.instance_eval(dsl)
             @r2.include?(2).should == true
@@ -155,7 +155,7 @@ describe "RangeDsl" do
       end
 
       describe "lte(3) | gte(6)" do
-        ["lte(3).or(gte(6))", "lte(3) & gte(6)"].each do |dsl|
+        ["lte(3).or(gte(6))", "lte(3) | gte(6)"].each do |dsl|
           it dsl do
             @r2 = @context.instance_eval(dsl)
             @r2.include?(2).should == true

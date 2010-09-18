@@ -6,6 +6,8 @@ module RangeDsl
     NEGATIVE_INFINITY = -1.0/0
 
     class Base
+      include ConnectionExp::Client
+
       attr_accessor :value
       def initialize(value)
         @value = value
