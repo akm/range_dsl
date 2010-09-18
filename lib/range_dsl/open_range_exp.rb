@@ -16,15 +16,21 @@ module RangeDsl
       def include?(v)
         to_range.include?(v)
       end
+
+      def inspect
+        "#{name_for_inspect}(#{@value.inspect})"
+      end
     end
 
     class GreaterThanEqual < Base
+      def name_for_inspect; "gte"; end
       def to_range
         @range ||= (@value..POSITIVE_INFINITY)
       end
     end
 
     class GreaterThan < GreaterThanEqual
+      def name_for_inspect; "gt"; end
       def include?(v)
         return false if RangeDsl.equal_with_considering_numeric(@value, v)
         to_range.include?(v)
@@ -32,12 +38,14 @@ module RangeDsl
     end
 
     class LessThanEqual < Base
+      def name_for_inspect; "lte"; end
       def to_range
         @range ||= (NEGATIVE_INFINITY..@value)
       end
     end
 
     class LessThan < Base
+      def name_for_inspect; "lt"; end
       def to_range
         @range ||= (NEGATIVE_INFINITY...@value)
       end

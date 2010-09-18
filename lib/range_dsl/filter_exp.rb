@@ -9,8 +9,13 @@ module RangeDsl
       def initialize(src)
         @src = src
       end
+
       def include?(v)
         !src.include?(v)
+      end
+
+      def inspect
+        "not_be(#{@src.inspect})"
       end
     end
 

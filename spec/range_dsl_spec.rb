@@ -33,6 +33,7 @@ describe "RangeDsl" do
           @r1.include?(100).should == true
           @r1.include?(100.0).should == true
           @r1.include?(1234567890).should == true
+          @r1.inspect.should == "gte(100)"
         end
       end
     end
@@ -45,6 +46,7 @@ describe "RangeDsl" do
           @r1.include?(100).should == false
           @r1.include?(100.0).should == false
           @r1.include?(1234567890).should == true
+          @r1.inspect.should == "gt(100)"
         end
       end
     end
@@ -60,6 +62,7 @@ describe "RangeDsl" do
           @r1.include?(100.0).should == true
           @r1.include?(100.000001).should == false
           @r1.include?(101).should == false
+          @r1.inspect.should == "lte(100)"
         end
       end
     end
@@ -75,6 +78,7 @@ describe "RangeDsl" do
           @r1.include?(100.0).should == false
           @r1.include?(100.000001).should == false
           @r1.include?(101).should == false
+          @r1.inspect.should == "lt(100)"
         end
       end
     end
@@ -91,6 +95,7 @@ describe "RangeDsl" do
           @r1.include?(100).should == true
           @r1.include?(100.0001).should == false
           @r1.include?(101).should == false
+          @r1.inspect.should == "eq(100)"
         end
       end
     end
@@ -105,6 +110,7 @@ describe "RangeDsl" do
           @r1.include?(100).should == false
           @r1.include?(100.0001).should == true
           @r1.include?(101).should == true
+          @r1.inspect.should == "neq(100)"
         end
       end
     end
@@ -128,6 +134,7 @@ describe "RangeDsl" do
           @r1.include?(7).should == true
           @r1.include?(7.1).should == false
           @r1.include?(8).should == false
+          @r1.inspect.should == "any(3, 7)"
         end
       end
     end
@@ -135,7 +142,7 @@ describe "RangeDsl" do
 
 
   describe "not with other expression" do
-    it "not equal(100)" do
+    it "not_be equal(100)" do
       r1 = @context.instance_eval do
         not_be(equal(100))
       end
@@ -145,8 +152,8 @@ describe "RangeDsl" do
       r1.include?(100.0).should == false
       r1.include?(100.1).should == true
       r1.include?(101).should == true
+      r1.inspect.should == "not_be(eq(100))"
     end
-
   end
 
 
@@ -167,17 +174,18 @@ describe "RangeDsl" do
           @r2.include?(6).should == false
           @r2.include?(6.1).should == false
           @r2.include?(7).should == false
+          @r2.inspect.should == "gt(3) & lt(6)"
         end
       end
     end
 
     describe "gte(3) & lte(6)" do
-      [
-        "gte(3).and(lte(6))",
-        "gte(3) & lte(6)",
-        "all(gte(3), lte(6))", # allはandの代わりに使えます
-        "all [gte(3), lte(6)]", # allはandの代わりに使えます
-      ].each do |dsl|
+      {
+        "gte(3).and(lte(6))" => "gte(3) & lte(6)",
+        "gte(3) & lte(6)"    => "gte(3) & lte(6)",
+        "all(gte(3), lte(6))"  => "all(gte(3), lte(6))", # allはandの代わりに使えます
+        "all [gte(3), lte(6)]" => "all(gte(3), lte(6))", # allはandの代わりに使えます
+      }.each do |dsl, inspection|
         it dsl do
           @r2 = @context.instance_eval(dsl)
           @r2.include?(2).should == false
@@ -192,17 +200,18 @@ describe "RangeDsl" do
           @r2.include?(6).should == true
           @r2.include?(6.1).should == false
           @r2.include?(7).should == false
+          @r2.inspect.should == inspection
         end
       end
     end
 
     describe "lt(3) | gt(6)" do
-      [
-        "lt(3).or(gt(6))",
-        "lt(3) | gt(6)",
-        "any(lt(3), gt(6))", # anyはorの代わりに使えます
-        "any [lt(3), gt(6)]", # anyはorの代わりに使えます
-      ].each do |dsl|
+      {
+        "lt(3).or(gt(6))" => "lt(3) | gt(6)",
+        "lt(3) | gt(6)"   => "lt(3) | gt(6)",
+        "any(lt(3), gt(6))"  => "any(lt(3), gt(6))", # anyはorの代わりに使えます
+        "any [lt(3), gt(6)]" => "any(lt(3), gt(6))", # anyはorの代わりに使えます
+      }.each do |dsl, inspection|
         it dsl do
           @r2 = @context.instance_eval(dsl)
           @r2.include?(2).should == true
@@ -217,6 +226,7 @@ describe "RangeDsl" do
           @r2.include?(6).should == false
           @r2.include?(6.1).should == true
           @r2.include?(7).should == true
+          @r2.inspect.should == inspection
         end
       end
     end

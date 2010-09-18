@@ -13,11 +13,19 @@ module RangeDsl
       def include?(v)
         RangeDsl.equal_with_considering_numeric(@value, v)
       end
+
+      def inspect
+        "eq(#{@value.inspect})"
+      end
     end
 
     class NotEqual < Equal
       def include?(v)
         !super
+      end
+
+      def inspect
+        "neq(#{@value.inspect})"
       end
     end
 

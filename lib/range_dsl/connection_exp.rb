@@ -20,15 +20,21 @@ module RangeDsl
       def initialize(left, right)
         @left, @right = left, right # P, Q
       end
+
+      def inspect
+        "#{@left.inspect} #{name_for_inspect} #{@right.inspect}"
+      end
     end
 
     class And < Base
+      def name_for_inspect; "&"; end
       def include?(v)
         left.include?(v) && right.include?(v)
       end
     end
 
     class Or < Base
+      def name_for_inspect; "|"; end
       def include?(v)
         left.include?(v) || right.include?(v)
       end
