@@ -16,7 +16,10 @@ module RangeDsl
   def any(*args); ContainerExp::Any.new(*args); end
   def all(*args); ContainerExp::All.new(*args); end
 
-  def func(&block); FilterExp::Func.new(&block); end
+  def func(block_str = nil, &block)
+    block ||= instance_eval("lambda " << block_str)
+    FilterExp::Func.new(block_str, &block)
+  end
 
   alias_method :gte, :greater_than_equal
   alias_method :gt, :greater_than

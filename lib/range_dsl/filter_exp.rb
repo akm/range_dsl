@@ -22,7 +22,8 @@ module RangeDsl
     class Func
       include ConnectionExp::Client
 
-      def initialize(&block)
+      def initialize(block_str = nil, &block)
+        @block_str = block_str
         @block = block
       end
 
@@ -31,7 +32,7 @@ module RangeDsl
       end
 
       def inspect
-        "func{...}"
+        "func" << (@block_str ? "(#{@block_str.inspect})" : '{}')
       end
     end
 

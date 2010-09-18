@@ -271,6 +271,18 @@ describe "RangeDsl" do
         r1.include?(1).should == true
         r1.include?(2).should == false
         r1.include?(3).should == true
+        r1.inspect.should == "gte(1) & func{}"
+      end
+
+      it "動的なブロックはinspectで出力できないので、文字列でも渡せるように" do
+        r1 = @context.instance_eval{ gte(1) & func("{|v| v % 2 == 1}") }
+        r1.include?(-3).should == false
+        r1.include?(-1).should == false
+        r1.include?(0).should == false
+        r1.include?(1).should == true
+        r1.include?(2).should == false
+        r1.include?(3).should == true
+        r1.inspect.should == "gte(1) & func(\"{|v| v % 2 == 1}\")"
       end
     end
   end
