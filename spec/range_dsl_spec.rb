@@ -93,6 +93,30 @@ describe "RangeDsl" do
     end
   end
 
+  describe "included in an array" do
+    describe "any" do
+      ["any(3, 7)", "any [3, 7]"].each do |dsl|
+        it dsl do
+          @r1 = @context.instance_eval(dsl)
+          @r1.include?(2).should == false
+          @r1.include?(2.9).should == false
+          @r1.include?(3.0).should == true
+          @r1.include?(3).should == true
+          @r1.include?(3.1).should == false
+          @r1.include?(4).should == false
+          @r1.include?(5).should == false
+          @r1.include?(6).should == false
+          @r1.include?(6.9).should == false
+          @r1.include?(7.0).should == true
+          @r1.include?(7).should == true
+          @r1.include?(7.1).should == false
+          @r1.include?(8).should == false
+        end
+      end
+    end
+  end
+
+
   describe "not with other expression" do
     it "not equal(100)" do
       r1 = @context.instance_eval do
@@ -131,7 +155,12 @@ describe "RangeDsl" do
     end
 
     describe "gte(3) & lte(6)" do
-      ["gte(3).and(lte(6))", "gte(3) & lte(6)"].each do |dsl|
+      [
+        "gte(3).and(lte(6))",
+        "gte(3) & lte(6)",
+        "all(gte(3), lte(6))", # allはandの代わりに使えます
+        "all [gte(3), lte(6)]", # allはandの代わりに使えます
+      ].each do |dsl|
         it dsl do
           @r2 = @context.instance_eval(dsl)
           @r2.include?(2).should == false
@@ -151,7 +180,12 @@ describe "RangeDsl" do
     end
 
     describe "lt(3) | gt(6)" do
-      ["lt(3).or(gt(6))", "lt(3) | gt(6)"].each do |dsl|
+      [
+        "lt(3).or(gt(6))",
+        "lt(3) | gt(6)",
+        "any(lt(3), gt(6))", # anyはorの代わりに使えます
+        "any [lt(3), gt(6)]", # anyはorの代わりに使えます
+      ].each do |dsl|
         it dsl do
           @r2 = @context.instance_eval(dsl)
           @r2.include?(2).should == true

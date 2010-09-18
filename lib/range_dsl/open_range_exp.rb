@@ -26,8 +26,7 @@ module RangeDsl
 
     class GreaterThan < GreaterThanEqual
       def include?(v)
-        return false if v == @value
-        return false if @value.is_a?(Numeric) && v.is_a?(Numeric) && (v.to_f == @value.to_f)
+        return false if RangeDsl.equal_with_considering_numeric(@value, v)
         to_range.include?(v)
       end
     end

@@ -11,9 +11,7 @@ module RangeDsl
       end
 
       def include?(v)
-        return true if v == @value
-        return true if @value.is_a?(Numeric) && v.is_a?(Numeric) && (v.to_f == @value.to_f)
-        false
+        RangeDsl.equal_with_considering_numeric(@value, v)
       end
     end
 
