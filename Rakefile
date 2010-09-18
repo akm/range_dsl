@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "range_dsl"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{range_dsl provides easy open range and ranges with complex conditions}
+    gem.description = %Q{range_dsl provides easy open range and ranges with complex conditions}
     gem.email = "akm2000@gmail.com"
     gem.homepage = "http://github.com/akm/range_dsl"
     gem.authors = ["akimatter"]
