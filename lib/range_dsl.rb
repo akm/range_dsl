@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 module RangeDsl
 
   autoload :OpenRangeExp, 'range_dsl/open_range_exp'
@@ -49,3 +50,8 @@ module RangeDsl
   end
 
 end
+
+# irbはオッケーなのに、rails cで使ったら activesupport-3.0.0/lib/active_support/core_ext/module/introspection.rb
+# あたりで"NameError: uninitialized constant RangeDsl::FilterExp::Invert::ConnectionExp"というエラーになるので、
+# 回避するために先にrequireしておきます。
+require 'range_dsl/connection_exp'
