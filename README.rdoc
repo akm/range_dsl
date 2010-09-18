@@ -1,6 +1,60 @@
 = range_dsl
 
-Description goes here.
+range_dsl provides easy open range and ranges with complex conditions
+
+== example
+You can write these code in class which includes RangeDsl or 
+in object extend RangeDsl.
+
+Now use it in irb.
+ $ irb
+ require 'rubygems'
+ require 'range_dsl'
+ include RangeDsl
+
+For example, with greater_than_equal
+ gte(3).include?(1) # => false
+ gte(3).include?(3) # => true
+ gte(3).include?(4) # => true
+
+with greater_than
+ gt(3).include?(1) # => false
+ gt(3).include?(3) # => false
+ gt(3).include?(4) # => true
+
+You can use these operators:
+* gte, greater_than_equal
+* gt , greater_than
+* lte, less_than_equal
+* lt , less_than
+* eq , equal
+* neq, not_equal
+* not_be
+
+And can use connection operator
+* &, and
+* |, or
+* all
+* any
+
+For example, you can write "1, 2, or greater than equal 5" like following:
+ r = any(1, 2, gte(5))
+ r.include?(0) # => false
+ r.include?(1) # => true
+ r.include?(2) # => true
+ r.include?(3) # => false
+ r.include?(4) # => false
+ r.include?(5) # => true
+ 
+Or you can write it like this:
+ r = any(1, 2) | gte(5)
+ r.include?(0) # => false
+ r.include?(1) # => true
+ r.include?(2) # => true
+ r.include?(3) # => false
+ r.include?(4) # => false
+ r.include?(5) # => true
+
 
 == Note on Patches/Pull Requests
  
