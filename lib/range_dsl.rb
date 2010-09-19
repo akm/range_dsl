@@ -31,6 +31,8 @@ module RangeDsl
   alias_method :not_be, :invert
   alias_method :nb, :invert
 
+  extend self
+
   class << self
     def include?(exp, v)
       if exp.is_a?(Array)
@@ -46,6 +48,14 @@ module RangeDsl
       return true if left == right
       return true if left.is_a?(Numeric) && right.is_a?(Numeric) && (left.to_f == right.to_f)
       false
+    end
+
+    def compile(dsl = nil, &block)
+      if block
+        self.instance_eval(&block)
+      else
+        self.instance_eval(dsl)
+      end
     end
   end
 

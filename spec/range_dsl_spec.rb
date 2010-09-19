@@ -2,14 +2,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "RangeDsl" do
-  before(:all) do
-    @context = Object.new
-    @context.extend(RangeDsl)
-  end
-
   describe "introduction" do
     it "1,2と5以上はtrue" do
-      r = @context.instance_eval do
+      r = RangeDsl.compile do
         any 1, 2, gte(5)
       end
       r.include?(-10000).should == false
@@ -28,7 +23,7 @@ describe "RangeDsl" do
     describe "gte" do
       [:gte, :greater_than_equal].each do |operator|
         it operator do
-          @r1 = @context.send(operator, 100)
+          @r1 = RangeDsl.send(operator, 100)
           @r1.include?(99).should == false
           @r1.include?(100).should == true
           @r1.include?(100.0).should == true
@@ -41,7 +36,7 @@ describe "RangeDsl" do
     describe "gt" do
       [:gt, :greater_than].each do |operator|
         it operator do
-          @r1 = @context.send(operator, 100)
+          @r1 = RangeDsl.send(operator, 100)
           @r1.include?(99).should == false
           @r1.include?(100).should == false
           @r1.include?(100.0).should == false
@@ -54,7 +49,7 @@ describe "RangeDsl" do
     describe "lte" do
       [:lte, :less_than_equal].each do |operator|
         it operator do
-          @r1 = @context.send(operator, 100)
+          @r1 = RangeDsl.send(operator, 100)
           @r1.include?(-1234567890).should == true
           @r1.include?(99).should == true
           @r1.include?(99.99).should == true
@@ -70,7 +65,7 @@ describe "RangeDsl" do
     describe "lt" do
       [:lt, :less_than].each do |operator|
         it operator do
-          @r1 = @context.send(operator, 100)
+          @r1 = RangeDsl.send(operator, 100)
           @r1.include?(-1234567890).should == true
           @r1.include?(99).should == true
           @r1.include?(99.99).should == true
@@ -88,7 +83,7 @@ describe "RangeDsl" do
     describe "eq" do
       [:eq, :equal].each do |operator|
         it operator do
-          @r1 = @context.send(operator, 100)
+          @r1 = RangeDsl.send(operator, 100)
           @r1.include?(99).should == false
           @r1.include?(99.9999).should == false
           @r1.include?(100.0).should == true
@@ -103,7 +98,7 @@ describe "RangeDsl" do
     describe "lt" do
       [:neq, :not_equal].each do |operator|
         it operator do
-          @r1 = @context.send(operator, 100)
+          @r1 = RangeDsl.send(operator, 100)
           @r1.include?(99).should == true
           @r1.include?(99.9999).should == true
           @r1.include?(100.0).should == false
@@ -120,7 +115,7 @@ describe "RangeDsl" do
     describe "any" do
       ["any(3, 7)", "any [3, 7]"].each do |dsl|
         it dsl do
-          @r1 = @context.instance_eval(dsl)
+          @r1 = RangeDsl.compile(dsl)
           @r1.include?(2).should == false
           @r1.include?(2.9).should == false
           @r1.include?(3.0).should == true
@@ -143,7 +138,7 @@ describe "RangeDsl" do
 
   describe "not with other expression" do
     it "not_be equal(100)" do
-      r1 = @context.instance_eval do
+      r1 = RangeDsl.compile do
         not_be(equal(100))
       end
       r1.include?(99).should == true
@@ -161,7 +156,7 @@ describe "RangeDsl" do
     describe "gt(3) & lt(6)" do
       ["gt(3).and(lt(6))", "gt(3) & lt(6)"].each do |dsl|
         it dsl do
-          @r2 = @context.instance_eval(dsl)
+          @r2 = RangeDsl.compile(dsl)
           @r2.include?(2).should == false
           @r2.include?(2.999).should == false
           @r2.include?(3).should == false
@@ -187,7 +182,7 @@ describe "RangeDsl" do
         "all [gte(3), lte(6)]" => "all(gte(3), lte(6))", # allはandの代わりに使えます
       }.each do |dsl, inspection|
         it dsl do
-          @r2 = @context.instance_eval(dsl)
+          @r2 = RangeDsl.compile(dsl)
           @r2.include?(2).should == false
           @r2.include?(2.999).should == false
           @r2.include?(3).should == true
@@ -213,7 +208,7 @@ describe "RangeDsl" do
         "any [lt(3), gt(6)]" => "any(lt(3), gt(6))", # anyはorの代わりに使えます
       }.each do |dsl, inspection|
         it dsl do
-          @r2 = @context.instance_eval(dsl)
+          @r2 = RangeDsl.compile(dsl)
           @r2.include?(2).should == true
           @r2.include?(2.999).should == true
           @r2.include?(3).should == false
@@ -243,7 +238,7 @@ describe "RangeDsl" do
         "not_be(gt(3)).or(not_be(lt(6)))",
       ].each do |dsl|
         it dsl do
-          @r2 = @context.instance_eval(dsl)
+          @r2 = RangeDsl.compile(dsl)
           @r2.include?(2).should == true
           @r2.include?(2.999).should == true
           @r2.include?(3).should == true
@@ -264,7 +259,7 @@ describe "RangeDsl" do
   describe "dynamic compare" do
     describe "with Proc" do
       it "1以上の奇数" do
-        r1 = @context.instance_eval{ gte(1) & func{|v| v % 2 == 1} }
+        r1 = RangeDsl.compile{ gte(1) & func{|v| v % 2 == 1} }
         r1.include?(-3).should == false
         r1.include?(-1).should == false
         r1.include?(0).should == false
@@ -275,7 +270,7 @@ describe "RangeDsl" do
       end
 
       it "動的なブロックはinspectで出力できないので、文字列でも渡せるように" do
-        r1 = @context.instance_eval{ gte(1) & func("{|v| v % 2 == 1}") }
+        r1 = RangeDsl.compile{ gte(1) & func("{|v| v % 2 == 1}") }
         r1.include?(-3).should == false
         r1.include?(-1).should == false
         r1.include?(0).should == false
@@ -289,22 +284,22 @@ describe "RangeDsl" do
 
   describe "complex inspection" do
     it "lt(3) | gt(30) | any(2, 14, 36)" do
-      r2 = @context.instance_eval("lt(3) | gt(30) | any(12, 14, 16)")
+      r2 = RangeDsl.compile("lt(3) | gt(30) | any(12, 14, 16)")
       r2.inspect.should == "lt(3) | gt(30) | any(12, 14, 16)"
     end
 
     it "gte(3) & lt(10) & any(2, 4, 6)" do
-      r2 = @context.instance_eval("gte(3) & lt(10) & any(2, 4, 6)")
+      r2 = RangeDsl.compile("gte(3) & lt(10) & any(2, 4, 6)")
       r2.inspect.should == "gte(3) & lt(10) & any(2, 4, 6)"
     end
 
     it "(lt(3) | gt(30)) & any(2, 14, 36)" do
-      r2 = @context.instance_eval("(lt(3) | gt(30)) & any(2, 14, 36)")
+      r2 = RangeDsl.compile("(lt(3) | gt(30)) & any(2, 14, 36)")
       r2.inspect.should == "(lt(3) | gt(30)) & any(2, 14, 36)"
     end
 
     it "lt(3) & (gt(30) | any(2, 14, 36))" do
-      r2 = @context.instance_eval("lt(3) & (gt(30) | any(2, 14, 36))")
+      r2 = RangeDsl.compile("lt(3) & (gt(30) | any(2, 14, 36))")
       r2.inspect.should == "lt(3) & (gt(30) | any(2, 14, 36))"
     end
   end
