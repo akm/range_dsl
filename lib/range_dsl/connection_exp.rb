@@ -27,6 +27,16 @@ module RangeDsl
         "#{left_str} #{name_for_inspect} #{right_str}"
       end
 
+      def eql?(other)
+        (other.class == self.class) &&
+          self.left.eql?(other.left) && self.right.eql?(other.right)
+      end
+      alias_method :==, :eql?
+
+      def hash
+        "#{self.class.name}:#{inspect}".hash
+      end
+
       private
       def require_brace?(other)
         return false unless other.is_a?(ConnectionExp::Base)

@@ -17,6 +17,15 @@ module RangeDsl
       def inspect
         "eq(#{@value.inspect})"
       end
+
+      def eql?(other)
+        (other.value == self.value) && (other.class == self.class)
+      end
+      alias_method :==, :eql?
+
+      def hash
+        "#{self.class.name}:#{inspect}".hash
+      end
     end
 
     class NotEqual < Equal

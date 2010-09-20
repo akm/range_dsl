@@ -14,6 +14,16 @@ module RangeDsl
         args = @values.inspect.gsub(/^\[|\]$/, '')
         "#{name_for_inspect}(#{args})"
       end
+
+      def eql?(other)
+        (other.class == self.class) && (self.values == other.values)
+      end
+      alias_method :==, :eql?
+
+      def hash
+        "#{self.class.name}:#{inspect}".hash
+      end
+
     end
 
     class Any < Base

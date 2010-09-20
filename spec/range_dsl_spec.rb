@@ -4,9 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "RangeDsl" do
   describe "introduction" do
     it "1,2と5以上はtrue" do
-      r = RangeDsl.compile do
-        any 1, 2, gte(5)
-      end
+      r = RangeDsl.compile{any 1, 2, gte(5)}
       r.include?(-10000).should == false
       r.include?(0).should == false
       r.include?(1).should == true
@@ -16,6 +14,7 @@ describe "RangeDsl" do
       r.include?(5).should == true
       r.include?(6).should == true
       r.include?(10000).should == true
+      r.should == RangeDsl.compile{any 1, 2, gte(5)}
     end
   end
 
@@ -29,6 +28,7 @@ describe "RangeDsl" do
           @r1.include?(100.0).should == true
           @r1.include?(1234567890).should == true
           @r1.inspect.should == "gte(100)"
+          @r1.should == RangeDsl.gte(100)
         end
       end
     end
@@ -91,11 +91,12 @@ describe "RangeDsl" do
           @r1.include?(100.0001).should == false
           @r1.include?(101).should == false
           @r1.inspect.should == "eq(100)"
+          @r1.should == RangeDsl.eq(100)
         end
       end
     end
 
-    describe "lt" do
+    describe "neq" do
       [:neq, :not_equal].each do |operator|
         it operator do
           @r1 = RangeDsl.send(operator, 100)
@@ -106,6 +107,7 @@ describe "RangeDsl" do
           @r1.include?(100.0001).should == true
           @r1.include?(101).should == true
           @r1.inspect.should == "neq(100)"
+          @r1.should == RangeDsl.neq(100)
         end
       end
     end
@@ -130,6 +132,7 @@ describe "RangeDsl" do
           @r1.include?(7.1).should == false
           @r1.include?(8).should == false
           @r1.inspect.should == "any(3, 7)"
+          @r1.should == RangeDsl.any(3, 7)
         end
       end
     end
@@ -148,6 +151,7 @@ describe "RangeDsl" do
       r1.include?(100.1).should == true
       r1.include?(101).should == true
       r1.inspect.should == "not_be(eq(100))"
+      r1.should == RangeDsl.compile{ not_be(eq(100)) }
     end
   end
 
@@ -170,6 +174,7 @@ describe "RangeDsl" do
           @r2.include?(6.1).should == false
           @r2.include?(7).should == false
           @r2.inspect.should == "gt(3) & lt(6)"
+          @r2.should == RangeDsl.compile{ gt(3) & lt(6) }
         end
       end
     end
@@ -267,6 +272,8 @@ describe "RangeDsl" do
         r1.include?(2).should == false
         r1.include?(3).should == true
         r1.inspect.should == "gte(1) & func{}"
+        # func{|v| v % 2 == 1} のブロックが取得できないので、常に一致しません。
+        r1.should_not == RangeDsl.compile{ gt(3) & lt(6) }
       end
 
       it "動的なブロックはinspectで出力できないので、文字列でも渡せるように" do
@@ -278,6 +285,7 @@ describe "RangeDsl" do
         r1.include?(2).should == false
         r1.include?(3).should == true
         r1.inspect.should == "gte(1) & func(\"{|v| v % 2 == 1}\")"
+        r1.should == RangeDsl.compile("gte(1) & func(\"{|v| v % 2 == 1}\")")
       end
     end
   end
@@ -286,6 +294,7 @@ describe "RangeDsl" do
     it "lt(3) | gt(30) | any(2, 14, 36)" do
       r2 = RangeDsl.compile("lt(3) | gt(30) | any(12, 14, 16)")
       r2.inspect.should == "lt(3) | gt(30) | any(12, 14, 16)"
+      r2.should == RangeDsl.compile("lt(3) | gt(30) | any(12, 14, 16)")
     end
 
     it "gte(3) & lt(10) & any(2, 4, 6)" do
