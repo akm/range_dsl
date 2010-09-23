@@ -29,6 +29,8 @@ describe "RangeDsl" do
           @r1.include?(1234567890).should == true
           @r1.inspect.should == "gte(100)"
           @r1.should == RangeDsl.gte(100)
+          @r1.should_not == 100 # 数値とは一致しない
+          @r1.should_not == (1..100) # Rangeとも一致しない
         end
       end
     end
@@ -92,6 +94,8 @@ describe "RangeDsl" do
           @r1.include?(101).should == false
           @r1.inspect.should == "eq(100)"
           @r1.should == RangeDsl.eq(100)
+          @r1.should_not == 100 # 数値とは一致しない
+          @r1.should_not == (1..100) # Rangeとも一致しない
         end
       end
     end
@@ -201,6 +205,8 @@ describe "RangeDsl" do
           @r2.include?(6.1).should == false
           @r2.include?(7).should == false
           @r2.inspect.should == inspection
+          @r2.should_not == 3 # 数値とは一致しない
+          @r2.should_not == (3...6) # Rangeとも一致しない
         end
       end
     end

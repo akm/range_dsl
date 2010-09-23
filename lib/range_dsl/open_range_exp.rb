@@ -22,7 +22,7 @@ module RangeDsl
       end
 
       def eql?(other)
-        (other.value == self.value) && (other.class == self.class)
+        (other.class == self.class) && (other.value == self.value)
       end
       alias_method :==, :eql?
 
